@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1",
+    "dotenv": "^16",
     "hono": "^4",
     "mppx": "0.8.7",
     "viem": "^2"

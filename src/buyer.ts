@@ -7,6 +7,7 @@
  *
  * Start the seller first, then:  npm run buyer
  */
+import 'dotenv/config' // load .env (cp .env.example .env) before reading process.env
 import { privateKeyToAccount } from 'viem/accounts'
 import { Mppx } from 'mppx/client'
 import { evm } from 'mppx/evm/client'

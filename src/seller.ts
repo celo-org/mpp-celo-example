@@ -7,6 +7,7 @@
  *
  * Run:  npm run seller
  */
+import 'dotenv/config' // load .env (cp .env.example .env) before reading process.env
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { Mppx } from 'mppx/server'
