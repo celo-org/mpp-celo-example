@@ -38,7 +38,9 @@ chmod 600 .env
    `openssl rand -base64 32`
 2. **`X402_API_KEY`** — settlement credits, from <https://x402.celo.org>
    (connect wallet → Create API key). Free credits to start.
-3. **`SELLER_PAY_TO`** — the wallet that receives the payments.
+3. **`SELLER_PAY_TO`** — the wallet that receives the payments. Use a
+   different address from the buyer: the facilitator refuses settlements
+   where payer and recipient match.
 4. **`BUYER_PRIVATE_KEY`** — a throwaway wallet funded with a little Celo Sepolia
    USDC from <https://faucet.circle.com>. No native CELO needed.
 

@@ -46,9 +46,10 @@ export const SELLER_URL = `http://localhost:${PORT}/premium`
 
 // Stablecoin to charge in. Known assets carry the chain id, decimals, and
 // EIP-712 domain, so both seller and buyer can pass them straight to mppx.
-export const TOKEN = process.env.MPP_TOKEN ?? 'USDC'
+export const TOKEN = (process.env.MPP_TOKEN ?? 'USDC').toUpperCase()
 const tokens: Record<string, ReturnType<typeof assets.define>> = CFG.tokens
-if (!tokens[TOKEN]) {
+// Object.hasOwn so prototype keys such as "constructor" can't pass as tokens.
+if (!Object.hasOwn(tokens, TOKEN)) {
   console.error(
     `MPP_TOKEN=${TOKEN} is not available on ${CFG.label}. Choose one of: ${Object.keys(tokens).join(', ')}`,
   )
