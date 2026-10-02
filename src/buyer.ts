@@ -3,7 +3,8 @@
  *
  * Registers the EVM charge method with a funded account; the mppx client then
  * transparently answers any 402 challenge (sign EIP-3009 credential → retry).
- * The buyer needs Celo Sepolia USDC and NO native gas (facilitator sponsors it).
+ * The buyer needs the stablecoin being charged (Celo Sepolia USDC by default)
+ * and NO native gas (facilitator sponsors it).
  *
  * Start the seller first, then:  npm run buyer
  */
@@ -11,10 +12,10 @@ import 'dotenv/config' // load .env (cp .env.example .env) before reading proces
 import { privateKeyToAccount } from 'viem/accounts'
 import { Mppx } from 'mppx/client'
 import { evm } from 'mppx/evm/client'
-import { CFG, SELLER_URL } from './config.js'
+import { ASSET, CFG, SELLER_URL, TOKEN } from './config.js'
 
 if (!process.env.BUYER_PRIVATE_KEY) {
-  console.error('Missing BUYER_PRIVATE_KEY (a testnet wallet funded with USDC).')
+  console.error(`Missing BUYER_PRIVATE_KEY (a wallet funded with ${TOKEN}).`)
   process.exit(1)
 }
 
@@ -27,13 +28,13 @@ const account = privateKeyToAccount(
 // Register the EVM charge method with the buyer's account. Mppx.create patches
 // the global fetch to handle MPP 402 challenges automatically.
 //
-// NOTE: on the buyer side you must supply the token `decimals` and its EIP-712
-// `authorization` domain ({ name, version }) yourself. The mppx client builds the
-// payment credential locally and does NOT infer these from the server's
-// challenge, so leaving them out throws:
+// NOTE: the client builds the payment credential locally and does NOT read the
+// token `decimals` or EIP-712 `authorization` domain from the server's challenge.
+// Passing a known asset in `currencies` supplies both. If you pass a raw token
+// address instead, also set `decimals` and `authorization: { name, version }`,
+// otherwise mppx throws:
 //   - "EVM charge maxAmount requires currency decimals."
 //   - "EVM authorization requires token name and version."
-// For Celo USDC the domain is name "USDC", version "2".
 Mppx.create({
   methods: [
     evm.charge({
@@ -41,15 +42,13 @@ Mppx.create({
       // Client-side policy: only pay this network + currency, capped in amount.
       // The actual price is read from the server's MPP challenge at pay time.
       networks: [CFG.chainId],
-      currencies: [CFG.usdc],
-      decimals: 6,
-      authorization: { name: 'USDC', version: '2' },
-      maxAmount: '1', // never pay more than 1 USDC for a single request
+      currencies: [ASSET],
+      maxAmount: '1', // never pay more than 1 token for a single request
     }),
   ],
 })
 
-console.log(`Paying ${SELLER_URL} as ${account.address} on ${CFG.label}…`)
+console.log(`Paying ${SELLER_URL} in ${TOKEN} as ${account.address} on ${CFG.label}…`)
 const res = await fetch(SELLER_URL)
 console.log('status:', res.status)
 console.log('body:', await res.json())
