@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Minimal runnable example of Machine Payments Protocol (MPP) payments on Celo — a one-time USDC charge gating an API, settled on Celo.",
+  "description": "Minimal runnable example of Machine Payments Protocol (MPP) payments on Celo — a one-time stablecoin (USDC, USDT, or USAT) charge gating an API, settled on Celo.",
   "scripts": {
     "seller": "tsx src/seller.ts",
     "buyer": "tsx src/buyer.ts"
@@ -12,7 +12,7 @@
     "@hono/node-server": "^1",
     "dotenv": "^16",
     "hono": "^4",
-    "mppx": "0.8.7",
+    "mppx": "0.12.0",
     "viem": "^2"
   },
   "devDependencies": {
